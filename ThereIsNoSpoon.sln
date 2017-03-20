@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopshelfTest", "TopshelfTest\TopshelfTest.csproj", "{F8A6A9F5-95BC-4820-8FBB-0EF132F97B14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThereIsNoSpoon", "TopshelfTest\ThereIsNoSpoon.csproj", "{F8A6A9F5-95BC-4820-8FBB-0EF132F97B14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
