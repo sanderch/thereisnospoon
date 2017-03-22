@@ -1,8 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="resources\wordlist" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="resources\wordlist" />
+  </ItemGroup>
 
 </Project>

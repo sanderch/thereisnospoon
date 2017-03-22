@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ThereIsNoSpoon
 {
-    class Program
+    internal class Program
     {
         static void Main()
         {
@@ -22,12 +23,12 @@ namespace ThereIsNoSpoon
 
             var result = FindTriples(wordsByStringLetters, anagram, hashes);
             result.AddRange(FindQuarters(pairsCollection, anagram, hashes));
-            
+
             result.ForEach(Console.WriteLine);
             Console.ReadLine();
         }
 
-        private static IEnumerable<string> FindQuarters(IReadOnlyDictionary<int, List<string>> pairsCollection, IEnumerable<char> anagram, ICollection<string> hashes)
+        private static List<string> FindQuarters(IReadOnlyDictionary<int, List<string>> pairsCollection, IEnumerable<char> anagram, ICollection<string> hashes)
         {
             var t = 0;
             var result = new List<string>();
@@ -57,8 +58,7 @@ namespace ThereIsNoSpoon
                                 var r = Match($"{phrase} {phrase2}", hashes);
                                 if (r != null)
                                 {
-                                    Console.WriteLine($"GOTCHA: {phrase} {phrase2}");
-                                    result.Add($"GOTCHA: {phrase} {phrase2}");
+                                    result.Add(r);
                                 }
                             }
                         }));
@@ -94,14 +94,15 @@ namespace ThereIsNoSpoon
 
         private static List<string> FindTriples(IReadOnlyCollection<string> lst, IEnumerable<char> anagram, ICollection<string> hashes)
         {
-            var i = 0;
             var result = new List<string>();
             var anagramSum = anagram.Sum(c => c);
+            var spaceCharSum = " ".ToCharArray().Sum(c => c);
             foreach (var word1 in lst)
             {
-                i++;
-                Console.WriteLine(i);
-                if (word1.ToCharArray().Sum(c => c) == anagramSum - "  ".ToCharArray().Sum(c => c)
+
+                Console.WriteLine(word1);
+                var word1Sum = word1.ToCharArray().Sum(c => c);
+                if (word1Sum == anagramSum - "  ".ToCharArray().Sum(c => c)
                 )
                 {
                     var res = Match($"{word1}", hashes);
@@ -110,13 +111,10 @@ namespace ThereIsNoSpoon
                         result.Add(res);
                     }
                 }
-                Console.WriteLine(word1);
                 foreach (var word2 in lst)
                 {
-                    Console.Write('.');
-                    if (" ".ToCharArray().Sum(c => c) + word1.ToCharArray().Sum(c => c) + word2.ToCharArray().Sum(c => c) ==
-                        anagramSum - " ".ToCharArray().Sum(c => c)
-                    )
+                    var word2Sum = word2.ToCharArray().Sum(c => c);
+                    if (spaceCharSum + word1Sum + word2Sum == anagramSum - spaceCharSum)
                     {
                         var res = Match($"{word1} {word2}", hashes);
                         if (res != null)
@@ -127,8 +125,7 @@ namespace ThereIsNoSpoon
 
                     foreach (var word3 in lst)
                     {
-                        if ("  ".ToCharArray().Sum(c => c) + word1.ToCharArray().Sum(c => c) +
-                            word2.ToCharArray().Sum(c => c) + word3.ToCharArray().Sum(c => c) == anagramSum
+                        if (spaceCharSum*2 + word1Sum + word2Sum + word3.ToCharArray().Sum(c => c) == anagramSum
                         )
                         {
                             var res = Match($"{word1} {word2} {word3}", hashes);
@@ -162,13 +159,13 @@ namespace ThereIsNoSpoon
 
         private static List<string> GetWordsByStringLetters(char[] anagram)
         {
-            List<string> lst;
-            using (var fileStream = File.OpenRead("C:\\Users\\chea\\Downloads\\wordlist"))
+            var assembly = Assembly.GetEntryAssembly();
+            const string resourceName = "ThereIsNoSpoon.resources.wordlist";
+            var lst = new List<string>();
+            using (var fileStream = assembly.GetManifestResourceStream(resourceName))
             {
                 using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, 128))
                 {
-                    lst = new List<string>();
-
                     string line;
                     while ((line = streamReader.ReadLine()) != null)
                     {
